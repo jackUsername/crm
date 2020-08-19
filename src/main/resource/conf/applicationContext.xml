@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+ <!--  声明数据源 -->
+<context:property-placeholder location="classpath:conf/jdbc.properties"/>
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.name}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.max}"/>
+    </bean>
+
+   <!-- 声明sqlsessionFactoryBen-->
+    <bean id="sqlSessionFactroy" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource"/>
+        <property name="configLocation" value="classpath:conf/mybatis.xml"/>
+    </bean>
+    <!--声明mybatis的扫描器，创建dao-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactroy"/>
+        <property name="basePackage" value="com.xujie.crm.setting.dao"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactroy"/>
+        <property name="basePackage" value="com.xujie.crm.workbench.dao"/>
+    </bean>
+
+    <!-- 声明service的注解@service所在的包名-->
+    <context:component-scan base-package="com.xujie.crm.setting.servlet"/>
+
+  <context:component-scan base-package="com.xujie.crm.workbench.service"/>
+
+    <context:component-scan base-package="com.xujie.crm.setting.web"/>
+
+
+</beans>
